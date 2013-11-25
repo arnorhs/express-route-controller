@@ -18,7 +18,7 @@ npm install express-route-controller
 Now create a folder where you want all your controllers, eg. `controllers`, and add a file in there,
 named `mycontroller.js`. Then define it somehow, like so:
 
-```
+```javascript
 module.exports = {
     myaction: function(req, res) {
     },
@@ -30,7 +30,7 @@ module.exports = {
 In your main app.js file (or wherever you set up express routes normally) simply call the helper
 function (very sparse demo express app):
 
-```
+```javascript
 var express = require('express');
 var app = express();
 var erc = require('express-route-control');
@@ -48,7 +48,7 @@ app.listen(3000);
 ```
 
 You can make this even more easier, by defining your routes in a `routes.json` file, like so:
-```
+```json
 {
     "/fetch_hotdogs": "mycontroller#myaction",
     "/save_hotdogs": { "action": "mycontroller#myotheraction, "method": "post" }
@@ -57,7 +57,7 @@ You can make this even more easier, by defining your routes in a `routes.json` f
 
 And loading the routes is as simple as:
 
-```
+```javascript
 ...
 
 erc(app, {
