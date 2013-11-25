@@ -74,6 +74,7 @@ Pull requests, feature ideas and bug reports are welcome
 
 ### Todo
 
+- Figuring out a way to deal with middleware, for non-gloabl type of middleware
 - It would be nice to figure out a way to add unit tests
 - Possibly there should be an easy mode for everybody who wants to use the defaults. Either that
   or having the basepath as a spearate variable and including a routes.json file if the routes argument
