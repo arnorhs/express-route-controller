@@ -1,6 +1,6 @@
 {
   "name": "express-route-controller",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A helper function to assign controller actions to routes in express",
   "main": "index.js",
   "dependencies": {
@@ -20,5 +20,12 @@
     "action"
   ],
   "author": "Arnor Heidar Sigurdsson <arnorhs@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/arnorhs/express-route-controller.git"
+  },
+  "bugs": {
+    "url": "https://github.com/arnorhs/express-route-controller/issues"
+  }
 }
