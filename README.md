@@ -72,6 +72,15 @@ erc(app, {
 
 Pull requests, feature ideas and bug reports are welcome
 
+### Todo
+
+- It would be nice to figure out a way to add unit tests
+- Possibly there should be an easy mode for everybody who wants to use the defaults. Either that
+  or having the basepath as a spearate variable and including a routes.json file if the routes argument
+  passed is a string rather than an object
+- It would be nice to have a command line utility to genearte the controllers. Possibly with a
+  `res.send('name of action');` in the function body
+
 ### License
 
 MIT
