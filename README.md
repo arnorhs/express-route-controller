@@ -40,7 +40,7 @@ erc(app, {
     controllers: __dirname + '/controllers',
     routes: {
         '/fetch_hotdogs': 'mycontroller#myaction',
-        '/save_hotdogs': { action: 'mycontroller#myotheraction, method: 'post' }
+        '/save_hotdogs': { action: 'mycontroller#myotheraction', method: 'post' }
     }
 });
 
@@ -51,7 +51,7 @@ You can make this even more easier, by defining your routes in a `routes.json` f
 ```json
 {
     "/fetch_hotdogs": "mycontroller#myaction",
-    "/save_hotdogs": { "action": "mycontroller#myotheraction, "method": "post" }
+    "/save_hotdogs": { "action": "mycontroller#myotheraction", "method": "post" }
 }
 ```
 
