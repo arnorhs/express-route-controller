@@ -1,6 +1,6 @@
 {
   "name": "express-route-controller",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A helper function to assign controller actions to routes in express",
   "main": "index.js",
   "dependencies": {
