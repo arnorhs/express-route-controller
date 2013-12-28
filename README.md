@@ -33,7 +33,7 @@ function (very sparse demo express app):
 ```javascript
 var express = require('express');
 var app = express();
-var erc = require('express-route-control');
+var erc = require('express-route-controller');
 
 // set up express route control:
 erc(app, {
