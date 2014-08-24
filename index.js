@@ -10,19 +10,18 @@ module.exports = function(expressApp, config) {
     }
 
     var controllers = ctrlr(config.controllers);
+    var methods = ['get', 'head', 'post', 'put', 'delete', 'trace', 'options', 'connect', 'path'];
 
     for (var route in config.routes) {
         var meta = config.routes[route];
 
-        if (typeof meta === 'string') {
-            meta = { action: meta };
+        if (typeof meta === 'string') { 
+            expressApp.get(route, controllers(meta));
+            continue;
         }
 
-        var method = (meta.method || 'get').toLowerCase();
-        var action = controllers(meta.action);
-
-        expressApp[method](route, action);
+        for (var i = 0; i < methods.length; i++) 
+            if (meta[methods[i]]) 
+                expressApp[methods[i]](route, controllers(meta[methods[i]]));
     }
 };
-
-
