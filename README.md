@@ -23,7 +23,15 @@ module.exports = {
     myaction: function(req, res) {
     },
     myotheraction: function(req, res) {
-    }
+    },
+    404: function(req, res) {
+        console.log(req.api);
+        // {
+        //     'controller': 'mycontroller',
+        //     'action': '404',
+        //     'route': '/*'
+        // }
+    },
 };
 ```
 
@@ -40,7 +48,8 @@ erc(app, {
     controllers: __dirname + '/controllers',
     routes: {
         '/fetch_hotdogs': 'mycontroller#myaction',
-        '/save_hotdogs': { action: 'mycontroller#myotheraction', method: 'post' }
+        '/save_hotdogs': { 'action': 'mycontroller#myotheraction', 'method': 'post' },
+        '/*': { 'controller': 'mycontroller', 'action': '404', 'method': [ 'get', 'post', 'all' ] }
     }
 });
 

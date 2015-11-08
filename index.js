@@ -15,7 +15,7 @@ module.exports = function(expressApp, config) {
 
 	function assignRoute(route, method, meta) {
 		var method = (method || 'all').toLowerCase();
-		if(allowedMethods.indexOf(method) === -1) throw new Error('Method: '+method+' - is not a valide method type');
+		if(allowedMethods.indexOf(method) === -1) throw new Error('Method: '+method+' - is not a valid method type');
 
 		expressApp[method](route, function (req, res, next) {
 			var action = meta.action.split('#');
@@ -34,6 +34,8 @@ module.exports = function(expressApp, config) {
 
 		if (typeof meta === 'string') {
 			meta = { action: meta };
+		}else if(!meta.action.match(/#/i)){
+			meta.action = meta.controller+'#'+meta.action;
 		}
 		if (Array.isArray(meta.method)) {
 			for( var m in meta.method){
