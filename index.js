@@ -16,17 +16,36 @@ module.exports = function(expressApp, config) {
 	function assignRoute(route, method, meta) {
 		var method = (method || 'all').toLowerCase();
 		if(allowedMethods.indexOf(method) === -1) throw new Error('Method: '+method+' - is not a valid method type');
+		var action = meta.action.split('#');
 
-		expressApp[method](route, function (req, res, next) {
-			var action = meta.action.split('#');
+		function attachApi(req, res, next) {
 			req.api = {
 				'route': route,
 				'controller': action[0],
 				'action': action[1],
 			};
-			return next();
-		});
-		expressApp[method](route, controllers(meta.action));
+			next();
+		};
+		function checkPolicies(req, res, next){
+			if(app.config.policies && (app.config.policies[action[0]] || app.config.policies['*'])){
+				var CPolicies = app.config.policies[action[0]] || {};
+				var policies = [].concat(app.config.policies['*'], CPolicies['*'], CPolicies[action[1]]);
+					policies = _.chain(policies).compact().uniq().value();
+				console.log(policies);
+				return async.each(
+					policies,
+					function (p, done){
+						if(app.policies[p]){
+							app.policies[p](req, res, function(){ return done(res.headersSent); });
+						}else{
+							console.log(p, "is not a valid policy.");
+							done();
+						}
+					},
+					function(){ if(!res.headersSent) return next(); });
+			}else{ return next(); }
+		}
+		expressApp[method](route, attachApi, checkPolicies, controllers(meta.action));
 	}
 
 	for (var route in config.routes) {
