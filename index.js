@@ -10,6 +10,10 @@ module.exports = function(expressApp, config) {
 	if (typeof config.controllers !== 'string') {
 		throw new Error('config.controllers must be set to a valid directory path');
 	}
+	config.logs = [].concat(config.logs);
+	var logs = {
+		'policies': !!config.logs.indexOf('policies'),
+	}
 
 	var controllers = ctrlr(config.controllers);
 
@@ -31,18 +35,22 @@ module.exports = function(expressApp, config) {
 				var CPolicies = app.config.policies[action[0]] || {};
 				var policies = [].concat(app.config.policies['*'], CPolicies['*'], CPolicies[action[1]]);
 					policies = _.chain(policies).compact().uniq().value();
-				console.log(policies);
 				return async.each(
 					policies,
 					function (p, done){
-						if(app.policies[p]){
+						if(logs.policies && !res.headersSent){
+							console.log(p)
+						}
+						if(res.headersSent){
+							done("Headers Sent");
+						}else if(app.policies[p]){
 							app.policies[p](req, res, function(){ return done(res.headersSent); });
 						}else{
 							console.log(p, "is not a valid policy.");
 							done();
 						}
 					},
-					function(){ if(!res.headersSent) return next(); });
+					function(){ if(!res.headersSent){ return next(); } });
 			}else{ return next(); }
 		}
 		expressApp[method](route, attachApi, checkPolicies, controllers(meta.action));
