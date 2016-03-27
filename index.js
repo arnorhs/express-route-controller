@@ -38,9 +38,6 @@ module.exports = function(expressApp, config) {
 				return async.each(
 					policies,
 					function (p, done){
-						if(logs.policies && !res.headersSent){
-							console.log(p)
-						}
 						if(res.headersSent){
 							done("Headers Sent");
 						}else if(app.policies[p]){
