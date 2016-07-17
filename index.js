@@ -1,4 +1,5 @@
 var ctrlr = require('ctrlr');
+var _ = require('lodash');
 
 
 var allowedMethods = [ 'get', 'post', 'put', 'delete', 'patch', 'all' ];
@@ -7,15 +8,26 @@ module.exports = function(expressApp, config) {
 		throw new Error('config.routes must be set to a valid route object map');
 	}
 
-	if (typeof config.controllers !== 'string') {
+	var controllers;
+
+	if(typeof config.controllers === 'object'){
+		controllers = function(action){
+			var c = _.get(config.controllers, action.split("#"));
+			if(!c){ throw new Error(action.replace(".", '\.'), "doesn't exist."); }
+			return c;
+		}
+	}
+	else if (typeof config.controllers !== 'string') {
 		throw new Error('config.controllers must be set to a valid directory path');
 	}
+	else{ var controllers = ctrlr(config.controllers); }
+
 	config.logs = [].concat(config.logs);
 	var logs = {
 		'policies': !!config.logs.indexOf('policies'),
 	}
 
-	var controllers = ctrlr(config.controllers);
+
 
 	function assignRoute(route, method, meta) {
 		var method = (method || 'all').toLowerCase();
@@ -50,6 +62,7 @@ module.exports = function(expressApp, config) {
 					function(){ if(!res.headersSent){ return next(); } });
 			}else{ return next(); }
 		}
+
 		expressApp[method](route, attachApi, checkPolicies, controllers(meta.action));
 	}
 
