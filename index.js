@@ -13,7 +13,7 @@ module.exports = function(expressApp, config) {
 	if(typeof config.controllers === 'object'){
 		controllers = function(action){
 			var c = _.get(config.controllers, action.split("#"));
-			if(!c){ throw new Error(action.replace(".", '\.'), "doesn't exist."); }
+			if(!c){ throw new Error(action.replace(".", '.'), "doesn't exist."); }
 			return c;
 		}
 	}
