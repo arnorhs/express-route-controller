@@ -47,7 +47,7 @@ module.exports = function(expressApp, config) {
 				var CPolicies = app.config.policies[action[0]] || {};
 				var policies = [].concat(app.config.policies['*'], CPolicies['*'], CPolicies[action[1]]);
 					policies = _.chain(policies).compact().uniq().value();
-				return async.each(
+				return async.eachSeries(
 					policies,
 					function (p, done){
 						if(res.headersSent){
