@@ -42,7 +42,6 @@ module.exports = function(expressApp, config) {
 				action,
 			};
 			next();
-<<<<<<< HEAD
 		}
 		function checkPolicies(req, res, next) {
 			const CPolicies = _.get(app, `config.policies.${controller}`);
@@ -79,28 +78,6 @@ module.exports = function(expressApp, config) {
 					}
 				}
 			);
-=======
-		};
-		function checkPolicies(req, res, next){
-			if(app.config.policies && (app.config.policies[action[0]] || app.config.policies['*'])){
-				var CPolicies = app.config.policies[action[0]] || {};
-				var policies = [].concat(app.config.policies['*'], CPolicies['*'], CPolicies[action[1]]);
-					policies = _.chain(policies).compact().uniq().value();
-				return async.eachSeries(
-					policies,
-					function (p, done){
-						if(res.headersSent){
-							done("Headers Sent");
-						}else if(app.policies[p]){
-							app.policies[p](req, res, function(){ return done(res.headersSent); });
-						}else{
-							console.log(p, "is not a valid policy.");
-							done();
-						}
-					},
-					function(){ if(!res.headersSent){ return next(); } });
-			}else{ return next(); }
->>>>>>> master
 		}
 
 		expressApp[method](
