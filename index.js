@@ -30,54 +30,59 @@ module.exports = function(expressApp, config) {
 
 	function assignRoute(route, method, meta) {
 		var method = (method || 'all').toLowerCase();
-		if (allowedMethods.indexOf(method) === -1) {
-			throw new Error(`Method: ${method} - is not a valid method type`);
-		}
-		const [controller, action] = meta.action.split('#');
+		if (allowedMethods.indexOf(method) === -1)
+			throw new Error('Method: ' + method + ' - is not a valid method type');
+		var action = meta.action.split('#');
 
 		function attachApi(req, res, next) {
 			req.api = {
 				route: route,
-				controller,
-				action,
+				controller: action[0],
+				action: action[1],
 			};
 			next();
 		}
 		function checkPolicies(req, res, next) {
-			const CPolicies = _.get(app, `config.policies.${controller}`);
-			if (!CPolicies || !app.config.policies['*']) {
+			const actionConfig = _.get(app, `config.policies.${action[0]}`);
+			const hasConfig = actionConfig || _.get(app, 'config.policies.*');
+			if (hasConfig) {
+				var CPolicies = actionConfig || {};
+				var policies = [].concat(
+					app.config.policies['*'],
+					CPolicies['*'],
+					CPolicies[action[1]]
+				);
+				policies = _.chain(policies)
+					.compact()
+					.uniq()
+					.filter(
+						(item, index, array) =>
+							!array.includes(`!${item}`) && !item.includes('!')
+					)
+					.value();
+				return async.eachSeries(
+					policies,
+					function(p, done) {
+						if (res.headersSent) {
+							done('Headers Sent');
+						} else if (app.policies[p]) {
+							app.policies[p](req, res, function() {
+								return done(res.headersSent);
+							});
+						} else {
+							console.log(p, 'is not a valid policy.');
+							done();
+						}
+					},
+					function() {
+						if (!res.headersSent) {
+							return next();
+						}
+					}
+				);
+			} else {
 				return next();
 			}
-
-			const policies = _.chain([])
-				.concat(app.config.policies['*'], CPolicies['*'], CPolicies[action])
-				.compact()
-				.uniq()
-				.filter(
-					(item, index, array) =>
-						!array.includes(`!${item}`) && !item.includes('!')
-				)
-				.value();
-
-			return async.each(
-				policies,
-				function(p, done) {
-					if (res.headersSent) {
-						return done('Headers Sent');
-					}
-					if (app.policies[p]) {
-						return app.policies[p](req, res, () => done(res.headersSent));
-					}
-
-					console.log(p, 'is not a valid policy.');
-					done();
-				},
-				function() {
-					if (!res.headersSent) {
-						return next();
-					}
-				}
-			);
 		}
 
 		expressApp[method](
